@@ -18,13 +18,23 @@ reddit = praw.Reddit(
 )
 
 # News API Credentials
-news_api_key = '83224eca-05ce-402d-b67b-fec066a110f8'
+news_api_key = 'f1c1b88c5f55436596e8df23d2a7649b'
 
 
 analyzer = SentimentIntensityAnalyzer()
 
 
+@app.route('/')
+def home():
+    return render_template('dashboard.html')
 
+@app.route('/dashboard', methods = ["POST"])
+def dashboard():
+    key = request.form.get('keyword')
+    url = f'https://newsapi.org/v2/everything?q={key}&apiKey={news_api_key}&pageSize=100'
+    response = requests.get(url)
+    articles = response.json().get('articles', [])
+    return articles
 
 if __name__ == "__main__":
     app.run(debug = True)
