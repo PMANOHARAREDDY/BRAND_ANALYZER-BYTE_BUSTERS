@@ -86,13 +86,17 @@ def home():
 @app.route('/dashboard', methods = ["POST"])
 def dashboard():
     key = request.form.get('keyword')
-    reddit_posts = reddit_analyis(key)
-    EventRegistry_posts = EventRegistry_analysis(key)
-    news_articles = news_Analysis(key)
-    # return "News articles Data : "+str(news_articles)
-    # return "Reddit Data : "+ str(reddit_posts)
-    # return "Event Registry Data " : str(EventRegistry_posts)
-    return jsonify({"reddit posts":str(reddit_posts) , "Event Registry Articles":str(EventRegistry_posts), "News Articles":str(news_articles)})
+    # reddit_posts = reddit_analyis(key)
+    # EventRegistry_posts = EventRegistry_analysis(key)
+    # news_articles = news_Analysis(key)
+    reddit_posts = 0.663
+    EventRegistry_posts = 0.5
+    news_articles = 0
+    #return jsonify({"reddit posts":str(reddit_posts) , "Event Registry Articles":str(EventRegistry_posts), "News Articles":str(news_articles)})
+    if request.form.get('user') == "cus":
+        return render_template('Customer_dashboard.html', event = EventRegistry_posts,reddit = reddit_posts, news = news_articles)
+    else:
+        return render_template('brand_dashboard.html', event = EventRegistry_posts,reddit = reddit_posts, news = news_articles)
 
 if __name__ == "__main__":
     app.run(debug = True)

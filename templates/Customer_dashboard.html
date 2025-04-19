@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer DashBoard</title>
+</head>
+<body>
+    <h1>Event Registry Analysis..... Most Criticized and Most trending real time news on the Brand or product you are trying to buy</h1>
+    {% if event<=-0.6 %}
+        <h3>Very Negative</h3>
+        <h4> Avoid this product. Consistent negative feedback suggests major issues or dissatisfaction. Consider alternatives.</h4>
+    {% elif event<-0.2 %}
+        <h3> Negative </h3>
+        <h4>Not recommended. Many users report problems; purchase only if you have no other options or specific needs.</h4>
+    
+    {% elif event<0.19 %}
+        <h3> Neutral </h3>
+        <h4> Proceed with caution. Reviews are mixed; investigate further or consider your specific requirements before buying. </h4>
+    {% elif event<0.59 %}
+        <h3> Positive </h3>
+        <h4> Recommended. Most users are satisfied, though some minor issues may exist. Good choice for most buyers. </h4>
+    {% else %}
+        <h3> Very Positive </h3>
+        <h4> Highly recommended. Strong positive sentiment indicates high satisfaction and reliability. Buy with confidence. </h4>
+    {% endif %}
+
+    <h1>News Api Analysis.... Most Recent News on the Brand or product you are trying to buy</h1>
+    {% if event<=-0.6 %}
+        <h3>Very Negative</h3>
+        <h4> Avoid this product. Consistent negative feedback suggests major issues or dissatisfaction. Consider alternatives.</h4>
+    {% elif event<-0.2 %}
+        <h3> Negative </h3>
+        <h4>Not recommended. Many users report problems; purchase only if you have no other options or specific needs.</h4>
+    
+    {% elif event<0.19 %}
+        <h3> Neutral </h3>
+        <h4> Proceed with caution. Reviews are mixed; investigate further or consider your specific requirements before buying. </h4>
+    {% elif event<0.59 %}
+        <h3> Positive </h3>
+        <h4> Recommended. Most users are satisfied, though some minor issues may exist. Good choice for most buyers. </h4>
+    {% else %}
+        <h3> Very Positive </h3>
+        <h4> Highly recommended. Strong positive sentiment indicates high satisfaction and reliability. Buy with confidence. </h4>
+    {% endif %}
+
+    <h1>Reddit Api Analysis : Social Media is reflecting the following on the Brand or product you are trying to buy</h1>
+    {% if event<=-0.6 %}
+        <h3>Very Negative</h3>
+        <h4> Avoid this product. Consistent negative feedback suggests major issues or dissatisfaction. Consider alternatives.</h4>
+    {% elif event<-0.2 %}
+        <h3> Negative </h3>
+        <h4>Not recommended. Many users report problems; purchase only if you have no other options or specific needs.</h4>
+    
+    {% elif event<0.19 %}
+        <h3> Neutral </h3>
+        <h4> Proceed with caution. Reviews are mixed; investigate further or consider your specific requirements before buying. </h4>
+    {% elif event<0.59 %}
+        <h3> Positive </h3>
+        <h4> Recommended. Most users are satisfied, though some minor issues may exist. Good choice for most buyers. </h4>
+    {% else %}
+        <h3> Very Positive </h3>
+        <h4> Highly recommended. Strong positive sentiment indicates high satisfaction and reliability. Buy with confidence. </h4>
+    {% endif %}
+    <h1>Event Registry : {{event}}, News : {{news}}, Reddit : {{reddit}}</h1>
+</body>
+</html>

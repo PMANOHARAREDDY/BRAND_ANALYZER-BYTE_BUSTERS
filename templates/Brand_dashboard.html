@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand DashBoard</title>
+</head>
+<body>
+    <h1>Event Registry Analysis..... Most Criticized and Most trending real time news on your Brand</h1>
+    {% if event<=-0.6 %}
+        <h3>Severe dissatisfaction</h3>
+        <h4> Immediate investigation and urgent fixes; prioritize addressing recurring complaints and critical failures</h4>
+    {% elif event<-0.2 %}
+        <h3> Significant negative sentiment </h3>
+        <h4>Identify and resolve common pain points; communicate planned improvements to users</h4>
+    
+    {% elif event<0.19 %}
+        <h3> Mixed or unclear sentiment </h3>
+        <h4> Gather more detailed feedback; monitor trends and clarify user expectations </h4>
+    {% elif event<0.59 %}
+        <h3> Generally positive sentiment </h3>
+        <h4> Maintain strengths, but look for minor improvements or feature requests; acknowledge and reward positive feedback </h4>
+    {% else %}
+        <h3> Strong positive sentiment </h3>
+        <h4> Leverage satisfied users for testimonials and referrals; continue to innovate and exceed expectations </h4>
+    {% endif %}
+
+    <h1>News Api Analysis.... Most Recent News on your Brand....</h1>
+    {% if news<=-0.6 %}
+        <h3>Severe dissatisfaction</h3>
+        <h4> Immediate investigation and urgent fixes; prioritize addressing recurring complaints and critical failures</h4>
+    {% elif news<-0.2 %}
+        <h3> Significant negative sentiment </h3>
+        <h4>Identify and resolve common pain points; communicate planned improvements to users</h4>
+    {% elif news<0.19 %}
+        <h3> Mixed or unclear sentiment </h3>
+        <h4> Gather more detailed feedback; monitor trends and clarify user expectations </h4>
+    {% elif news<0.59 %}
+        <h3> Generally positive sentiment </h3>
+        <h4> Maintain strengths, but look for minor improvements or feature requests; acknowledge and reward positive feedback </h4>
+    {% else %}
+        <h3> Strong positive sentiment </h3>
+        <h4> Leverage satisfied users for testimonials and referrals; continue to innovate and exceed expectations </h4>
+    {% endif %}
+
+    <h1>Reddit Api Analysis : Social Media is reflecting the following on your brand....</h1>
+    {% if reddit<=-0.6 %}
+        <h3>Severe dissatisfaction</h3>
+        <h4> Immediate investigation and urgent fixes; prioritize addressing recurring complaints and critical failures</h4>
+    {% elif reddit<-0.2 %}
+        <h3> Significant negative sentiment </h3>
+        <h4>Identify and resolve common pain points; communicate planned improvements to users</h4>
+    
+    {% elif reddit<0.19 %}
+        <h3> Mixed or unclear sentiment </h3>
+        <h4> Gather more detailed feedback; monitor trends and clarify user expectations </h4>
+    {% elif reddit<0.59 %}
+        <h3> Generally positive sentiment </h3>
+        <h4> Maintain strengths, but look for minor improvements or feature requests; acknowledge and reward positive feedback </h4>
+    {% else %}
+        <h3> Strong positive sentiment </h3>
+        <h4> Leverage satisfied users for testimonials and referrals; continue to innovate and exceed expectations </h4>
+    {% endif %}
+    <h1>Event Registry : {{event}}, News : {{news}}, Reddit : {{reddit}}</h1>
+</body>
+</html>
