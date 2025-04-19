@@ -9,7 +9,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector as sql
 
-conn = sql.connect(host = "localhost", user = "root" ,password = "Pavitra@01", database = "BRAND_SENTINEO")
+conn = sql.connect(host = "localhost", user = "root" ,password = "password to access your cli", database = "your db")
 app = Flask(__name__)
 c = conn.cursor()
 
