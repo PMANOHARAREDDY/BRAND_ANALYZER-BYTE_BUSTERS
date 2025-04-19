@@ -8,8 +8,9 @@ import requests
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector as sql
+from bs4 import BeautifulSoup
 
-conn = sql.connect(host = "localhost", user = "root" ,password = "password to access your cli", database = "your db")
+conn = sql.connect(host = "localhost", user = "root" ,password = "Pavitra@01", database = "brand_sentineo")
 app = Flask(__name__)
 c = conn.cursor()
 
@@ -29,6 +30,11 @@ news_api_key = 'f1c1b88c5f55436596e8df23d2a7649b'
 
 # Event Registry Credentials
 event_registry_api_key = '354393d0-e38d-4735-9b99-fd99a8edc17f'
+
+# Tumbler API Credentials
+tumbler_api_key = 'aeFN2SHfTT0Wz4frlZNRKHFa9Zxo6tfgrRpjxJhXmwOCZvOR6R'
+tumbler_api_secret = '94eE6MYEn9JdWXcDKK75VzQOMeTOhn4ne0PftoKXvdinOfHReb'
+
 
 analyzer = SentimentIntensityAnalyzer()
 
@@ -84,9 +90,29 @@ def EventRegistry_analysis(key):
     sentiment = analyzer.polarity_scores(posts[0])['compound']
     return sentiment
 
+# Function for the Tumbler API Data Analysis
+def tumbler_analysis(key):
+    url = f'https://api.tumblr.com/v2/tagged?tag={key}&api_key={tumbler_api_key}'
+    response = requests.get(url)
+    posts = response.json().get('response', [])
+    text_bodies = []
+    for post in posts:
+        if post.get('type') == 'text' and 'body' in post:
+            text_bodies.append(post['body'])
+    clean_bodies = []
+    for html_body in text_bodies:
+        soup = BeautifulSoup(html_body, 'html.parser')
+        for tag in soup(['figure', 'img']):
+            tag.decompose()
+        text = soup.get_text(separator=' ', strip=True)
+        clean_bodies.append(text)
+    sentiment = analyzer.polarity_scores(clean_bodies[0])['compound']
+    return sentiment
+
 # Home Page
 @app.route('/')
 def home():
+    key = "Apple SmartWatch"
     return render_template('login.html')
 
 
@@ -121,19 +147,22 @@ def dashboard2():
     # reddit_posts = reddit_analyis(key)
     # EventRegistry_posts = EventRegistry_analysis(key)
     # news_articles = news_Analysis(key)
+    # tumblr_blogs = tumbler_analysis(key)
     reddit_posts = 0.663
     EventRegistry_posts = 0.5
     news_articles = 0
-    #return jsonify({"reddit posts":str(reddit_posts) , "Event Registry Articles":str(EventRegistry_posts), "News Articles":str(news_articles)})
+    tumblr_blogs = 0.36
+    # return jsonify({"reddit posts":str(reddit_posts) , "Event Registry Articles":str(EventRegistry_posts), "News Articles":str(news_articles), "tumblr Analysis ": str(tumblr_blogs)})
     if role == 'cus':
         query = "insert into search (email_id, product) values('{}','{}')".format(email_id,key)
         c.execute(query)
         conn.commit()
-        return render_template('Customer_dashboard.html', event = EventRegistry_posts,reddit = reddit_posts, news = news_articles)
+        return render_template('Customer_dashboard.html', event = EventRegistry_posts,reddit = reddit_posts, news = news_articles, tumblr = tumblr_blogs)
     elif role == 'com':
-        return render_template('brand_dashboard.html', event = EventRegistry_posts,reddit = reddit_posts, news = news_articles)
+        return render_template('brand_dashboard.html', event = EventRegistry_posts,reddit = reddit_posts, news = news_articles, tumblr = tumblr_blogs)
     else:
         return "State Bypassed"
+
 
 @app.route('/admin_Dashboard')
 def admin_dashboard():
