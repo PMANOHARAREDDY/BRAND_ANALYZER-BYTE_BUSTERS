@@ -7,8 +7,15 @@ import pandas as pd
 import requests
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from werkzeug.security import generate_password_hash, check_password_hash
+import mysql.connector as sql
 
+conn = sql.connect(host = "localhost", user = "root" ,password = "Pavitra@01", database = "BRAND_SENTINEO")
 app = Flask(__name__)
+c = conn.cursor()
+
+# global Variables
+global role
+global email_id
 
 # Reddit API Credentials
 reddit = praw.Reddit(
@@ -80,11 +87,36 @@ def EventRegistry_analysis(key):
 # Home Page
 @app.route('/')
 def home():
-    return render_template('dashboard.html')
+    return render_template('login.html')
+
+
+@app.route('/dashboard', methods = ["post","get"])
+def dashboard():
+    mail = request.form.get('emailID')
+    passwd = request.form.get('pass')
+    user = request.form.get('user')
+    c.execute('select email_id, pass, role from access')
+    rows = c.fetchall()
+    user_state = False
+    for i in rows:
+        if i[0] == mail and i[1] == passwd and i[2] == user:
+            user_state = True
+            break    
+    if user_state == True:
+        global role
+        global email_id
+        role = user
+        email_id = mail
+        if role!='admin':
+            return render_template('dashboard.html')
+        else:
+            return redirect(url_for('admin_dashboard'))
+    else:
+        return "User Credentials not verified"
 
 # DashBoard 
-@app.route('/dashboard', methods = ["POST"])
-def dashboard():
+@app.route('/dashboard2', methods = ["POST"])
+def dashboard2():
     key = request.form.get('keyword')
     # reddit_posts = reddit_analyis(key)
     # EventRegistry_posts = EventRegistry_analysis(key)
@@ -93,10 +125,21 @@ def dashboard():
     EventRegistry_posts = 0.5
     news_articles = 0
     #return jsonify({"reddit posts":str(reddit_posts) , "Event Registry Articles":str(EventRegistry_posts), "News Articles":str(news_articles)})
-    if request.form.get('user') == "cus":
+    if role == 'cus':
+        query = "insert into search (email_id, product) values('{}','{}')".format(email_id,key)
+        c.execute(query)
+        conn.commit()
         return render_template('Customer_dashboard.html', event = EventRegistry_posts,reddit = reddit_posts, news = news_articles)
-    else:
+    elif role == 'com':
         return render_template('brand_dashboard.html', event = EventRegistry_posts,reddit = reddit_posts, news = news_articles)
+    else:
+        return "State Bypassed"
+
+@app.route('/admin_Dashboard')
+def admin_dashboard():
+    c.execute('select * from search')
+    rows = c.fetchall()
+    return render_template('admin_dashboard.html',trace = rows)
 
 if __name__ == "__main__":
     app.run(debug = True)
