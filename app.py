@@ -27,7 +27,7 @@ flow  = Flow.from_client_secrets_file(
     redirect_uri = "http://127.0.0.1:5000/block2"
     )
 
-conn = sql.connect(host = "localhost", user = "root" ,password = "APKA PASSWORD", database = "brand_sentineo")
+conn = sql.connect(host = "localhost", user = "root" ,password = "Your Password Please", database = "brand_sentineo")
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "your-secret-key")
 c = conn.cursor()
@@ -35,14 +35,6 @@ c = conn.cursor()
 # global Variables
 global role
 global email_id
-
-def login_is_required(function):
-    @functools.wraps(function)
-    def wrapper(*args, **kwargs):
-        if "google_id" not in session:
-            return abort(401)
-        return function(*args, **kwargs)
-    return wrapper
 
 @app.route('/manohar')
 def manohar():
@@ -78,19 +70,20 @@ def block2():
     id_info = id_token.verify_oauth2_token(
         credentials.id_token,
         request_adapter,
-        google_client_id  # This should be your OAuth2 client ID
+        google_client_id  
     )
 
-    # Now id_info is a dict, so you can do:
     session["google_id"] = id_info.get("sub")
     session["email"] = id_info.get("email")
     global email_id
     email_id = session["email"]
     c.execute('SELECT role FROM access WHERE email_id = %s', (session["email"],))
     result = c.fetchone()
+    global role
     if result:
-        global role
         role = result[0]
+    else:
+        role = 'cus'
     return render_template('dashboard.html')
 
 
@@ -199,23 +192,31 @@ def dashboard():
     c.execute('select email_id, pass, role from access')
     rows = c.fetchall()
     user_state = False
+    registration_state = False
     for i in rows:
-        if i[0] == mail and i[1] == passwd and i[2] == user:
+        if i[0] == mail and check_password_hash(i[1], passwd) and i[2] == user:
             user_state = True
-            break    
+            registration_state = True
+            break 
+        elif i[0] == mail and i[2] == user:
+            registration_state = True   
     if user_state == True:
         global role
         global email_id
         role = user
         email_id = mail
         if role!='admin':
+            flash("Login successful!", "success")
             return render_template('dashboard.html')
         else:
+            flash("Login successful!", "success")
             return redirect(url_for('admin_dashboard'))
     else:
-        return "User Credentials not verified"
-
-
+        if registration_state == True:
+            flash("!!! Invalid Password !!", "danger")
+        else:
+            flash("!!! you are not registered, want to register???","danger")
+        return redirect(url_for('home'))
 
 # DashBoard 
 @app.route('/dashboard2', methods = ["POST"])
@@ -243,22 +244,34 @@ def dashboard2():
 @app.route('/register', methods = ["POST","GET"])
 def register():
     if request.method == "POST" and request.form.get('pass1')==request.form.get('pass2'):
-            user = request.form.get('role')
-            mail = request.form.get('emailID')
-            passwd = request.form.get('pass1')
-            c.execute('select * from access')
-            rows = c.fetchall()
-            user_state = False
-            for i in rows:
-                if i[0]==mail and i[2] == user:
-                    user_state = True
-            if user_state == True:
-                return render_template('register.html')
-            url = "insert into access values('{}','{}','{}')".format(mail, passwd, user)
-            c.execute(url)
-            conn.commit()
-            return redirect(url_for('home'))
-    return render_template('register.html')
+        user = request.form.get('role')
+        mail = request.form.get('emailID')
+        passwd = request.form.get('pass1')
+        if mail[-10:] != "@gmail.com":
+            flash("Not a valid gmail account.... use only public domain '@gmail.com'","danger")
+            return render_template('register.html')
+        if not (len(passwd) >= 8 and any(c.isupper() for c in passwd) and any(c.islower() for c in passwd) and any(c.isdigit() for c in passwd) and any(c in "!@#$%^&*()-_+=" for c in passwd)):
+            flash("atleast eight characters, One Lowercase, One Uppercase, One digit, One special character is required","danger")
+            return render_template('register.html')
+        c.execute('select * from access')
+        rows = c.fetchall()
+        user_state = False
+        for i in rows:
+            if i[0]==mail and i[2] == user:
+                user_state = True
+        if user_state == True:
+            return render_template('register.html')
+        passwd = generate_password_hash(passwd)
+        url = "insert into access values('{}','{}','{}')".format(mail, passwd, user)
+        c.execute(url)
+        conn.commit()
+        flash("Registration Successful","success")
+        return redirect(url_for('home'))
+    elif request.method == "POST" and request.form.get('pass1')!=request.form.get('pass2'):
+        flash("Passwords are not similiar..... try again!!!","danger")
+        return render_template('register.html')
+    else:
+        return render_template('register.html')
 
 @app.route('/admin_Dashboard')
 def admin_dashboard():

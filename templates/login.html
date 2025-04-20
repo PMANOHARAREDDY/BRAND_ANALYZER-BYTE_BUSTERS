@@ -6,6 +6,15 @@
     <title>Login Page</title>
 </head>
 <body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
     <form action = "dashboard" method="post">
         <table>
             <tr>
