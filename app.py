@@ -10,7 +10,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector as sql
 from bs4 import BeautifulSoup
 
-conn = sql.connect(host = "localhost", user = "root" ,password = "Pavitra@01", database = "brand_sentineo")
+conn = sql.connect(host = "localhost", user = "root" ,password = "YOUR PASSWORD PLEASE", database = "brand_sentineo")
 app = Flask(__name__)
 c = conn.cursor()
 
@@ -163,6 +163,26 @@ def dashboard2():
     else:
         return "State Bypassed"
 
+
+@app.route('/register', methods = ["POST","GET"])
+def register():
+    if request.method == "POST" and request.form.get('pass1')==request.form.get('pass2'):
+            user = request.form.get('role')
+            mail = request.form.get('emailID')
+            passwd = request.form.get('pass1')
+            c.execute('select * from access')
+            rows = c.fetchall()
+            user_state = False
+            for i in rows:
+                if i[0]==mail and i[2] == user:
+                    user_state = True
+            if user_state == True:
+                return render_template('register.html')
+            url = "insert into access values('{}','{}','{}')".format(mail, passwd, user)
+            c.execute(url)
+            conn.commit()
+            return redirect(url_for('home'))
+    return render_template('register.html')
 
 @app.route('/admin_Dashboard')
 def admin_dashboard():
