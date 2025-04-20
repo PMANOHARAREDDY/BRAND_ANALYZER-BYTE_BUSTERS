@@ -1,7 +1,9 @@
+import functools
 import os
+import pathlib
 import matplotlib.pyplot as plt
 import seaborn as sns
-from flask import Flask, request, render_template, url_for, session, redirect, flash, jsonify
+from flask import Flask, abort, request, render_template, url_for, session, redirect, flash, jsonify
 import praw
 import pandas as pd
 import requests
@@ -9,14 +11,88 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector as sql
 from bs4 import BeautifulSoup
+from google_auth_oauthlib.flow import Flow
+from google.oauth2 import id_token
+from google.auth.transport import requests
 
-conn = sql.connect(host = "localhost", user = "root" ,password = "YOUR PASSWORD PLEASE", database = "brand_sentineo")
+# Allowing HTTPs to serve on the localhost
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+# Google API Credentials
+google_client_id = "617388834874-khcmv9f11defv7tstbt1bga3cj5fa61r.apps.googleusercontent.com"
+
+client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")
+flow  = Flow.from_client_secrets_file(
+    client_secrets_file=client_secrets_file,
+    scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"],
+    redirect_uri = "http://127.0.0.1:5000/block2"
+    )
+
+conn = sql.connect(host = "localhost", user = "root" ,password = "APKA PASSWORD", database = "brand_sentineo")
 app = Flask(__name__)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "your-secret-key")
 c = conn.cursor()
 
 # global Variables
 global role
 global email_id
+
+def login_is_required(function):
+    @functools.wraps(function)
+    def wrapper(*args, **kwargs):
+        if "google_id" not in session:
+            return abort(401)
+        return function(*args, **kwargs)
+    return wrapper
+
+@app.route('/manohar')
+def manohar():
+    client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")
+    flow = Flow.from_client_secrets_file(
+        client_secrets_file=client_secrets_file,
+        scopes=[
+            "https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/userinfo.email",
+            "openid"
+        ],
+        redirect_uri="http://127.0.0.1:5000/block2"
+    )
+    authorization_url, state = flow.authorization_url()
+    session["state"] = state
+    return redirect(authorization_url)
+
+@app.route('/block2')
+def block2():
+    if session.get("state") != request.args.get("state"):
+        abort(401)
+
+    flow = Flow.from_client_secrets_file(
+        client_secrets_file=client_secrets_file,
+        scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"],
+        redirect_uri="http://127.0.0.1:5000/block2"
+    )
+    flow.fetch_token(authorization_response=request.url)
+    credentials = flow.credentials
+
+    # Decode and verify the ID token
+    request_adapter = requests.Request()
+    id_info = id_token.verify_oauth2_token(
+        credentials.id_token,
+        request_adapter,
+        google_client_id  # This should be your OAuth2 client ID
+    )
+
+    # Now id_info is a dict, so you can do:
+    session["google_id"] = id_info.get("sub")
+    session["email"] = id_info.get("email")
+    global email_id
+    email_id = session["email"]
+    c.execute('SELECT role FROM access WHERE email_id = %s', (session["email"],))
+    result = c.fetchone()
+    if result:
+        global role
+        role = result[0]
+    return render_template('dashboard.html')
+
 
 # Reddit API Credentials
 reddit = praw.Reddit(
@@ -37,6 +113,7 @@ tumbler_api_secret = '94eE6MYEn9JdWXcDKK75VzQOMeTOhn4ne0PftoKXvdinOfHReb'
 
 
 analyzer = SentimentIntensityAnalyzer()
+
 
 # Funtion for Reddit API Data Analysis
 def reddit_analyis(key):
@@ -112,9 +189,7 @@ def tumbler_analysis(key):
 # Home Page
 @app.route('/')
 def home():
-    key = "Apple SmartWatch"
     return render_template('login.html')
-
 
 @app.route('/dashboard', methods = ["post","get"])
 def dashboard():
@@ -140,6 +215,8 @@ def dashboard():
     else:
         return "User Credentials not verified"
 
+
+
 # DashBoard 
 @app.route('/dashboard2', methods = ["POST"])
 def dashboard2():
@@ -152,8 +229,8 @@ def dashboard2():
     EventRegistry_posts = 0.5
     news_articles = 0
     tumblr_blogs = 0.36
-    # return jsonify({"reddit posts":str(reddit_posts) , "Event Registry Articles":str(EventRegistry_posts), "News Articles":str(news_articles), "tumblr Analysis ": str(tumblr_blogs)})
-    if role == 'cus':
+
+    if role == 'cus':   
         query = "insert into search (email_id, product) values('{}','{}')".format(email_id,key)
         c.execute(query)
         conn.commit()
@@ -162,7 +239,6 @@ def dashboard2():
         return render_template('brand_dashboard.html', event = EventRegistry_posts,reddit = reddit_posts, news = news_articles, tumblr = tumblr_blogs)
     else:
         return "State Bypassed"
-
 
 @app.route('/register', methods = ["POST","GET"])
 def register():
