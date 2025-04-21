@@ -13,7 +13,8 @@ import mysql.connector as sql
 from bs4 import BeautifulSoup
 from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
-from google.auth.transport import requests
+from google.auth.transport.requests import Request as GoogleRequest
+from flask_caching import Cache
 
 # Allowing HTTPs to serve on the localhost
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
@@ -29,6 +30,11 @@ flow  = Flow.from_client_secrets_file(
 
 conn = sql.connect(host = "localhost", user = "root" ,password = "Your Password Please", database = "brand_sentineo")
 app = Flask(__name__)
+
+app.config['CACHE_TYPE'] = 'redis'
+app.config['CACHE_REDIS_URL'] = 'redis://localhost:6379'
+cache = Cache(app)
+
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "your-secret-key")
 c = conn.cursor()
 
@@ -66,7 +72,7 @@ def block2():
     credentials = flow.credentials
 
     # Decode and verify the ID token
-    request_adapter = requests.Request()
+    request_adapter = GoogleRequest()
     id_info = id_token.verify_oauth2_token(
         credentials.id_token,
         request_adapter,
@@ -218,18 +224,22 @@ def dashboard():
             flash("!!! you are not registered, want to register???","danger")
         return redirect(url_for('home'))
 
+def make_cache_key():
+    return f"dashboard_{request.form.get('keyword', '')}"
+
 # DashBoard 
 @app.route('/dashboard2', methods = ["POST"])
+@cache.cached(timeout=10, make_cache_key=make_cache_key)
 def dashboard2():
     key = request.form.get('keyword')
-    # reddit_posts = reddit_analyis(key)
-    # EventRegistry_posts = EventRegistry_analysis(key)
-    # news_articles = news_Analysis(key)
-    # tumblr_blogs = tumbler_analysis(key)
-    reddit_posts = 0.663
-    EventRegistry_posts = 0.5
-    news_articles = 0
-    tumblr_blogs = 0.36
+    reddit_posts = reddit_analyis(key)
+    EventRegistry_posts = EventRegistry_analysis(key)
+    news_articles = news_Analysis(key)
+    tumblr_blogs = tumbler_analysis(key)
+    # reddit_posts = 0.663
+    # EventRegistry_posts = 0.5
+    # news_articles = 0
+    # tumblr_blogs = 0.36
 
     if role == 'cus':   
         query = "insert into search (email_id, product) values('{}','{}')".format(email_id,key)
