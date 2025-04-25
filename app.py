@@ -28,7 +28,7 @@ flow  = Flow.from_client_secrets_file(
     redirect_uri = "http://127.0.0.1:5000/block2"
     )
 
-conn = sql.connect(host = "localhost", user = "root" ,password = "Pavitra@01", database = "brand_sentineo")
+conn = sql.connect(host = "127.0.0.1", user = "root" ,password = "Pavitra@01", database = "brand_sentineo")
 app = Flask(__name__)
 
 app.config['CACHE_TYPE'] = 'redis'
