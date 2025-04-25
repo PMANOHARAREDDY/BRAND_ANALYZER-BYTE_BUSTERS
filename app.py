@@ -28,7 +28,7 @@ flow  = Flow.from_client_secrets_file(
     redirect_uri = "http://127.0.0.1:5000/block2"
     )
 
-conn = sql.connect(host = "localhost", user = "root" ,password = "Your Password Please", database = "brand_sentineo")
+conn = sql.connect(host = "localhost", user = "root" ,password = "Pavitra@01", database = "brand_sentineo")
 app = Flask(__name__)
 
 app.config['CACHE_TYPE'] = 'redis'
@@ -232,6 +232,7 @@ def make_cache_key():
 @cache.cached(timeout=10, make_cache_key=make_cache_key)
 def dashboard2():
     key = request.form.get('keyword')
+    
     reddit_posts = reddit_analyis(key)
     EventRegistry_posts = EventRegistry_analysis(key)
     news_articles = news_Analysis(key)
@@ -289,5 +290,3 @@ def admin_dashboard():
     rows = c.fetchall()
     return render_template('admin_dashboard.html',trace = rows)
 
-if __name__ == "__main__":
-    app.run(debug = True)
