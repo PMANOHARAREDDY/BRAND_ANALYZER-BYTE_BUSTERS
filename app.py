@@ -15,6 +15,15 @@ from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
 from google.auth.transport.requests import Request as GoogleRequest
 from flask_caching import Cache
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import ssl
+
+smtp_server = "smtp.gmail.com"
+port = 587
+sender_email = "manoharareddyp8@gmail.com"
+password = "bpgo vgji tmkq lgkv"
 
 # Allowing HTTPs to serve on the localhost
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
@@ -233,14 +242,14 @@ def make_cache_key():
 def dashboard2():
     key = request.form.get('keyword')
     
-    reddit_posts = reddit_analyis(key)
-    EventRegistry_posts = EventRegistry_analysis(key)
-    news_articles = news_Analysis(key)
-    tumblr_blogs = tumbler_analysis(key)
-    # reddit_posts = 0.663
-    # EventRegistry_posts = 0.5
-    # news_articles = 0
-    # tumblr_blogs = 0.36
+    # reddit_posts = reddit_analyis(key)
+    # EventRegistry_posts = EventRegistry_analysis(key)
+    # news_articles = news_Analysis(key)
+    # tumblr_blogs = tumbler_analysis(key)
+    reddit_posts = 0.663
+    EventRegistry_posts = 0.5
+    news_articles = 0
+    tumblr_blogs = 0.36
 
     if role == 'cus':   
         query = "insert into search (email_id, product) values('{}','{}')".format(email_id,key)
@@ -258,6 +267,9 @@ def register():
         user = request.form.get('role')
         mail = request.form.get('emailID')
         passwd = request.form.get('pass1')
+        product = request.form.get('product')
+        device = request.form.get('device')
+        subscription = request.form.get('subscription')
         if mail[-10:] != "@gmail.com":
             flash("Not a valid gmail account.... use only public domain '@gmail.com'","danger")
             return render_template('register.html')
@@ -273,7 +285,7 @@ def register():
         if user_state == True:
             return render_template('register.html')
         passwd = generate_password_hash(passwd)
-        url = "insert into access values('{}','{}','{}')".format(mail, passwd, user)
+        url = "insert into access values('{}','{}','{}','{}','{}')".format(mail, passwd, product, device, subscription)
         c.execute(url)
         conn.commit()
         flash("Registration Successful","success")

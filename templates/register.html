@@ -30,9 +30,33 @@
                 <td> <input type="password" name = "pass2"></td>
             </tr>
             <tr>
-                <td> <input type = "radio" name = "role" value="cus" required>Customer</td>
-                <td> <input type="radio" name = "role" value="com"> Company</td>
+                <td>Enter Product name </td>
+                <td> <input type = "text" name = "product">   </td>
             </tr>
+            <tr>
+                <td>
+                    <label for="device">Kind of Device:</label>
+                </td>
+                <td>
+                    <select id="device" name="device" required>
+                        <option value="">--Select Device--</option>
+                        <option value="phone">Phone</option>
+                        <option value="laptop_desktop">Laptop/Desktop</option>
+                        <option value="vr_device">VR Device</option>
+                        <option value="watch">Watch</option>
+                        <option value="other">Other gadgets</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Subscription Type:</td>
+                <td>
+                    <input type="radio" id="normal" name="subscription" value="normal" required>
+                    <label for="normal">Casual</label>
+                    <input type="radio" id="pro" name="subscription" value="pro">
+                    <label for="pro">Pro</label>
+                </td>
+            </tr>            
             <tr>
                 <td><input type="submit"></td>
             </tr>
