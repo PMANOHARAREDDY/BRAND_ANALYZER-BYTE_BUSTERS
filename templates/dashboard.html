@@ -3,19 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Product Search | Electronics Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Inter', 'Montserrat', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(120deg, #4e54c8 0%, #8f94fb 100%);
+            overflow: hidden;
+        }
+        .bg-animated {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .bg-animated span {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.4;
+            animation: float 12s infinite alternate;
+        }
+        .bg-animated .circle1 {
+            width: 420px; height: 420px; left: -120px; top: -120px;
+            background: #a18cd1;
+            animation-delay: 0s;
+        }
+        .bg-animated .circle2 {
+            width: 340px; height: 340px; right: -100px; top: 60px;
+            background: #fbc2eb;
+            animation-delay: 3s;
+        }
+        .bg-animated .circle3 {
+            width: 300px; height: 300px; left: 60px; bottom: -120px;
+            background: #fad0c4;
+            animation-delay: 6s;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) scale(1);}
+            100% { transform: translateY(-40px) scale(1.1);}
+        }
+        .search-glass {
+            position: relative;
+            z-index: 1;
+            background: rgba(255,255,255,0.18);
+            box-shadow: 0 8px 48px 0 rgba(78,84,200,0.18);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 28px;
+            border: 1.5px solid rgba(255,255,255,0.25);
+            padding: 2.5rem 2rem 2rem 2rem;
+            max-width: 400px;
+            width: 100%;
+            margin: 40px auto;
+            animation: fadeIn 1.2s cubic-bezier(.23,1.04,.73,.97);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(60px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .search-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4e54c8 60%, #8f94fb 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.1rem auto;
+            font-size: 1.6rem;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 24px rgba(78,84,200,0.22);
+        }
+        .search-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: #4e54c8;
+            margin-bottom: 1.2rem;
+            text-align: center;
+            font-size: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #4e54c8;
+            font-size: 1.05rem;
+            margin-bottom: 0.3rem;
+        }
+        .form-control {
+            background: rgba(255,255,255,0.6);
+            border: 1.5px solid #e0e0e0;
+            border-radius: 9px;
+            font-size: 1.01rem;
+            padding: 0.65rem 1rem;
+            box-shadow: none;
+            transition: border 0.2s;
+        }
+        .form-control:focus {
+            border-color: #8f94fb;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(142, 148, 251, 0.08);
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #4e54c8 60%, #8f94fb 100%);
+            border: none;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            font-size: 1.08rem;
+            padding: 0.7rem 0;
+            border-radius: 9px;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(142, 148, 251, 0.11);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #8f94fb 60%, #4e54c8 100%);
+            box-shadow: 0 4px 16px rgba(142, 148, 251, 0.18);
+        }
+        @media (max-width: 500px) {
+            .search-glass {
+                padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+                max-width: 98vw;
+            }
+            .search-title {
+                font-size: 1.1rem;
+            }
+            .search-logo {
+                width: 44px; height: 44px; font-size: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <form action="/dashboard2" method="post">
-        <table>
-            <tr>
-                <td>Enter Product : </td>
-                <td> <input type = "text" name = "keyword">   </td>
-            </tr>
-            <tr>
-                <td><input type="submit"></td>
-            </tr>
-        </table>
-    </form>
+    <div class="bg-animated">
+        <span class="circle1"></span>
+        <span class="circle2"></span>
+        <span class="circle3"></span>
+    </div>
+    <div class="search-glass">
+        <div class="search-logo">
+            <span>EP</span>
+        </div>
+        <div class="search-title">Product Search</div>
+        <form action="/dashboard2" method="post">
+            <div class="mb-3">
+                <label for="keyword" class="form-label">Enter Product</label>
+                <input type="text" class="form-control" id="keyword" name="keyword" placeholder="Type product name..." required>
+            </div>
+            <div class="mb-3">
+                <label for="device" class="form-label">Kind of Device</label>
+                <select id="device" name="device" class="form-control" required>
+                    <option value="">--Select Device--</option>
+                    <option value="phone">Phone</option>
+                    <option value="laptop_desktop">Laptop/Desktop</option>
+                    <option value="vr_device">VR Device</option>
+                    <option value="watch">Watch</option>
+                    <option value="other">Other gadgets</option>
+                </select>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-block">Search</button>
+            </div>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

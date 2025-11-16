@@ -3,82 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer DashBoard</title>
+    <title>Customer Dashboard | Electronics Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Inter', 'Montserrat', sans-serif;
+            background: linear-gradient(120deg, #4e54c8 0%, #8f94fb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+        .bg-animated {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .bg-animated span {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.4;
+            animation: float 12s infinite alternate;
+        }
+        .bg-animated .circle1 {
+            width: 420px; height: 420px; left: -120px; top: -120px;
+            background: #a18cd1;
+            animation-delay: 0s;
+        }
+        .bg-animated .circle2 {
+            width: 340px; height: 340px; right: -100px; top: 60px;
+            background: #fbc2eb;
+            animation-delay: 3s;
+        }
+        .bg-animated .circle3 {
+            width: 300px; height: 300px; left: 60px; bottom: -120px;
+            background: #fad0c4;
+            animation-delay: 6s;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) scale(1);}
+            100% { transform: translateY(-40px) scale(1.1);}
+        }
+        .dashboard-glass {
+            position: relative;
+            z-index: 1;
+            background: rgba(255,255,255,0.18);
+            box-shadow: 0 8px 48px 0 rgba(78,84,200,0.18);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 28px;
+            border: 1.5px solid rgba(255,255,255,0.25);
+            padding: 2.7rem 2.2rem 2.2rem 2.2rem;
+            max-width: 700px;
+            width: 100%;
+            margin: 40px auto;
+            animation: fadeIn 1.2s cubic-bezier(.23,1.04,.73,.97);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(60px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .dashboard-logo {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, #4e54c8 60%, #8f94fb 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.3rem auto;
+            font-size: 2.1rem;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 24px rgba(78,84,200,0.22);
+        }
+        .dashboard-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: #4e54c8;
+            margin-bottom: 1.2rem;
+            text-align: center;
+            font-size: 2.1rem;
+            letter-spacing: 0.5px;
+        }
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: #4e54c8;
+            margin-top: 2.2rem;
+            margin-bottom: 0.8rem;
+            font-size: 1.3rem;
+            letter-spacing: 0.2px;
+        }
+        .sentiment-block {
+            margin-bottom: 1.6rem;
+            padding: 1.2rem 1.2rem 1rem 1.2rem;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.32);
+            box-shadow: 0 2px 12px rgba(78,84,200,0.07);
+        }
+        .sentiment-label {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+        }
+        .sentiment-very-negative { color: #d7263d; }
+        .sentiment-negative { color: #e55934; }
+        .sentiment-neutral { color: #f4d35e; }
+        .sentiment-positive { color: #377f5b; }
+        .sentiment-very-positive { color: #4e54c8; }
+        .sentiment-desc {
+            font-size: 1.03rem;
+            color: #333;
+            margin-bottom: 0;
+        }
+        .score-row {
+            margin-top: 2.5rem;
+            text-align: center;
+            font-size: 1.05rem;
+            color: #4e54c8;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+        @media (max-width: 800px) {
+            .dashboard-glass {
+                max-width: 98vw;
+            }
+        }
+        @media (max-width: 500px) {
+            .dashboard-glass {
+                padding: 1.4rem 0.7rem 1.2rem 0.7rem;
+                max-width: 98vw;
+            }
+            .dashboard-title {
+                font-size: 1.3rem;
+            }
+            .dashboard-logo {
+                width: 54px; height: 54px; font-size: 1.2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Event Registry Analysis..... Most Criticized and Most trending real time news on the Brand or product you are trying to buy</h1>
+    <div class="bg-animated">
+        <span class="circle1"></span>
+        <span class="circle2"></span>
+        <span class="circle3"></span>
+    </div>
+    <div class="dashboard-glass">
+        <div class="dashboard-logo">
+            <span>EP</span>
+        </div>
+        <div class="dashboard-title">
+            Customer Dashboard
+        </div>
+
+        <!-- Event Registry Analysis -->
+<div class="section-title">Event Registry Analysis</div>
+<div class="sentiment-block">
     {% if event<=-0.6 %}
-        <h3>Very Negative</h3>
-        <h4> Avoid this product. Consistent negative feedback suggests major issues or dissatisfaction. Consider alternatives.</h4>
+        <div class="sentiment-label sentiment-very-negative">Very Negative</div>
+        <div class="sentiment-desc">
+            Major trending news coverage is overwhelmingly negative. This indicates significant, widespread issues or controversy. Strongly consider alternatives.
+        </div>
     {% elif event<-0.2 %}
-        <h3> Negative </h3>
-        <h4>Not recommended. Many users report problems; purchase only if you have no other options or specific needs.</h4>
-    
+        <div class="sentiment-label sentiment-negative">Negative</div>
+        <div class="sentiment-desc">
+            Recent trending news reports are largely unfavorable. Exercise caution-there may be ongoing problems or public dissatisfaction.
+        </div>
     {% elif event<0.19 %}
-        <h3> Neutral </h3>
-        <h4> Proceed with caution. Reviews are mixed; investigate further or consider your specific requirements before buying. </h4>
+        <div class="sentiment-label sentiment-neutral">Neutral</div>
+        <div class="sentiment-desc">
+            Trending news is mixed or neutral. No major red flags, but not a clear endorsement either. Investigate further before making a decision.
+        </div>
     {% elif event<0.59 %}
-        <h3> Positive </h3>
-        <h4> Recommended. Most users are satisfied, though some minor issues may exist. Good choice for most buyers. </h4>
+        <div class="sentiment-label sentiment-positive">Positive</div>
+        <div class="sentiment-desc">
+            Trending news coverage is generally positive. The product or topic is currently viewed favorably in the news cycle.
+        </div>
     {% else %}
-        <h3> Very Positive </h3>
-        <h4> Highly recommended. Strong positive sentiment indicates high satisfaction and reliability. Buy with confidence. </h4>
+        <div class="sentiment-label sentiment-very-positive">Very Positive</div>
+        <div class="sentiment-desc">
+            Highly positive trending news! The topic is receiving strong, favorable attention. Consider this a reliable and popular choice right now.
+        </div>
     {% endif %}
+</div>
 
-    <h1>News Api Analysis.... Most Recent News on the Brand or product you are trying to buy</h1>
+<!-- News API Analysis -->
+<div class="section-title">News API Analysis</div>
+<div class="sentiment-block">
     {% if news<=-0.6 %}
-        <h3>Very Negative</h3>
-        <h4> Avoid this product. Consistent negative feedback suggests major issues or dissatisfaction. Consider alternatives.</h4>
+        <div class="sentiment-label sentiment-very-negative">Very Negative</div>
+        <div class="sentiment-desc">
+            Recent news articles are strongly negative. This suggests persistent issues or controversies. Review details before proceeding.
+        </div>
     {% elif news<-0.2 %}
-        <h3> Negative </h3>
-        <h4>Not recommended. Many users report problems; purchase only if you have no other options or specific needs.</h4>
+        <div class="sentiment-label sentiment-negative">Negative</div>
+        <div class="sentiment-desc">
+            News coverage is mostly negative. Be cautious-there may be unresolved problems or negative developments.
+        </div>
     {% elif news<0.19 %}
-        <h3> Neutral </h3>
-        <h4> Proceed with caution. Reviews are mixed; investigate further or consider your specific requirements before buying. </h4>
+        <div class="sentiment-label sentiment-neutral">Neutral</div>
+        <div class="sentiment-desc">
+            News sentiment is mixed. Some articles are positive, others negative. Further research is recommended.
+        </div>
     {% elif news<0.59 %}
-        <h3> Positive </h3>
-        <h4> Recommended. Most users are satisfied, though some minor issues may exist. Good choice for most buyers. </h4>
+        <div class="sentiment-label sentiment-positive">Positive</div>
+        <div class="sentiment-desc">
+            Most recent news articles are positive. The product or topic is generally well-received in the press.
+        </div>
     {% else %}
-        <h3> Very Positive </h3>
-        <h4> Highly recommended. Strong positive sentiment indicates high satisfaction and reliability. Buy with confidence. </h4>
+        <div class="sentiment-label sentiment-very-positive">Very Positive</div>
+        <div class="sentiment-desc">
+            News coverage is overwhelmingly positive. Strong media endorsement-buy or engage with confidence.
+        </div>
     {% endif %}
+</div>
 
-    <h1>Reddit Api Analysis : Social Media is reflecting the following on the Brand or product you are trying to buy</h1>
+<!-- Reddit API Analysis -->
+<div class="section-title">Reddit API Analysis</div>
+<div class="sentiment-block">
     {% if reddit<=-0.6 %}
-        <h3>Very Negative</h3>
-        <h4> Avoid this product. Consistent negative feedback suggests major issues or dissatisfaction. Consider alternatives.</h4>
+        <div class="sentiment-label sentiment-very-negative">Very Negative</div>
+        <div class="sentiment-desc">
+            Reddit discussions are highly negative. The community is reporting major issues or dissatisfaction. Consider alternatives based on social feedback.
+        </div>
     {% elif reddit<-0.2 %}
-        <h3> Negative </h3>
-        <h4>Not recommended. Many users report problems; purchase only if you have no other options or specific needs.</h4>
+        <div class="sentiment-label sentiment-negative">Negative</div>
+        <div class="sentiment-desc">
+            Social media conversations on Reddit are largely negative. Many users are dissatisfied or facing problems. Proceed only if you have specific needs.
+        </div>
     {% elif reddit<0.19 %}
-        <h3> Neutral </h3>
-        <h4> Proceed with caution. Reviews are mixed; investigate further or consider your specific requirements before buying. </h4>
+        <div class="sentiment-label sentiment-neutral">Neutral</div>
+        <div class="sentiment-desc">
+            Reddit sentiment is mixed. Community opinions are divided-look for detailed user experiences before deciding.
+        </div>
     {% elif reddit<0.59 %}
-        <h3> Positive </h3>
-        <h4> Recommended. Most users are satisfied, though some minor issues may exist. Good choice for most buyers. </h4>
+        <div class="sentiment-label sentiment-positive">Positive</div>
+        <div class="sentiment-desc">
+            Reddit users are generally positive. Most discussions highlight satisfaction, though minor issues may exist.
+        </div>
     {% else %}
-        <h3> Very Positive </h3>
-        <h4> Highly recommended. Strong positive sentiment indicates high satisfaction and reliability. Buy with confidence. </h4>
+        <div class="sentiment-label sentiment-very-positive">Very Positive</div>
+        <div class="sentiment-desc">
+            Reddit sentiment is extremely positive. The community strongly endorses this product or topic-expect high satisfaction.
+        </div>
     {% endif %}
+</div>
 
-    <h1>Tumblr Api Analysis : Social Media blogs is reflecting the following on the Brand or product you are trying to buy</h1>
+<!-- Tumblr API Analysis -->
+<div class="section-title">Tumblr API Analysis</div>
+<div class="sentiment-block">
     {% if tumblr<=-0.6 %}
-        <h3>Very Negative</h3>
-        <h4> Avoid this product. Consistent negative feedback suggests major issues or dissatisfaction. Consider alternatives.</h4>
+        <div class="sentiment-label sentiment-very-negative">Very Negative</div>
+        <div class="sentiment-desc">
+            Tumblr blog posts are overwhelmingly negative. Bloggers are highlighting major flaws or dissatisfaction. Look for alternatives.
+        </div>
     {% elif tumblr<-0.2 %}
-        <h3> Negative </h3>
-        <h4>Not recommended. Many users report problems; purchase only if you have no other options or specific needs.</h4>
-    
+        <div class="sentiment-label sentiment-negative">Negative</div>
+        <div class="sentiment-desc">
+            Tumblr sentiment is mostly negative. Many blog posts report issues or concerns. Proceed with caution.
+        </div>
     {% elif tumblr<0.19 %}
-        <h3> Neutral </h3>
-        <h4> Proceed with caution. Reviews are mixed; investigate further or consider your specific requirements before buying. </h4>
+        <div class="sentiment-label sentiment-neutral">Neutral</div>
+        <div class="sentiment-desc">
+            Tumblr blogs show mixed opinions. No strong consensus-read detailed posts to understand the nuances.
+        </div>
     {% elif tumblr<0.59 %}
-        <h3> Positive </h3>
-        <h4> Recommended. Most users are satisfied, though some minor issues may exist. Good choice for most buyers. </h4>
+        <div class="sentiment-label sentiment-positive">Positive</div>
+        <div class="sentiment-desc">
+            Tumblr bloggers are generally positive. Most reviews and posts are favorable with minor caveats.
+        </div>
     {% else %}
-        <h3> Very Positive </h3>
-        <h4> Highly recommended. Strong positive sentiment indicates high satisfaction and reliability. Buy with confidence. </h4>
+        <div class="sentiment-label sentiment-very-positive">Very Positive</div>
+        <div class="sentiment-desc">
+            Tumblr blogs are highly positive. Bloggers are enthusiastic and recommend this product or topic.
+        </div>
     {% endif %}
-    <h1>Event Registry : {{event}}, News : {{news}}, Reddit : {{reddit}}, Tumblr : {{tumblr}}</h1>
+</div>
+
+
+        <div class="score-row">
+            Event Registry: {{event}}, News: {{news}}, Reddit: {{reddit}}, Tumblr: {{tumblr}}
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

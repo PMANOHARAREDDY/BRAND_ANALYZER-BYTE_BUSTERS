@@ -1,53 +1,404 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login | Electronics Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Inter', 'Montserrat', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(120deg, #4e54c8 0%, #8f94fb 100%);
+            overflow-y: auto;
+            flex-direction: column;
+        }
+        .bg-animated {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .bg-animated span {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.4;
+            animation: float 12s infinite alternate;
+        }
+        .bg-animated .circle1 {
+            width: 420px; height: 420px; left: -120px; top: -120px;
+            background: #a18cd1;
+            animation-delay: 0s;
+        }
+        .bg-animated .circle2 {
+            width: 340px; height: 340px; right: -100px; top: 60px;
+            background: #fbc2eb;
+            animation-delay: 3s;
+        }
+        .bg-animated .circle3 {
+            width: 300px; height: 300px; left: 60px; bottom: -120px;
+            background: #fad0c4;
+            animation-delay: 6s;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) scale(1);}
+            100% { transform: translateY(-40px) scale(1.1);}
+        }
+        .login-glass {
+            position: relative;
+            z-index: 1;
+            background: rgba(255,255,255,0.18);
+            box-shadow: 0 8px 48px 0 rgba(78,84,200,0.18);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 28px;
+            border: 1.5px solid rgba(255,255,255,0.25);
+            padding: 2.7rem 2.2rem 2.2rem 2.2rem;
+            max-width: 410px;
+            width: 100%;
+            margin: 40px auto 20px auto;
+            animation: fadeIn 1.2s cubic-bezier(.23,1.04,.73,.97);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(60px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .login-logo {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, #4e54c8 60%, #8f94fb 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.3rem auto;
+            font-size: 2.1rem;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 24px rgba(78,84,200,0.22);
+            transition: box-shadow 0.2s;
+        }
+        .login-logo:hover {
+            box-shadow: 0 8px 32px rgba(142, 148, 251, 0.22);
+        }
+        .login-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: #4e54c8;
+            margin-bottom: 1.2rem;
+            text-align: center;
+            font-size: 2.1rem;
+            letter-spacing: 0.5px;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #4e54c8;
+            font-size: 1.05rem;
+            margin-bottom: 0.3rem;
+        }
+        .form-control {
+            background: rgba(255,255,255,0.6);
+            border: 1.5px solid #e0e0e0;
+            border-radius: 9px;
+            font-size: 1.01rem;
+            padding: 0.65rem 1rem;
+            box-shadow: none;
+            transition: border 0.2s;
+        }
+        .form-control:focus {
+            border-color: #8f94fb;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(142, 148, 251, 0.08);
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #4e54c8 60%, #8f94fb 100%);
+            border: none;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            font-size: 1.08rem;
+            padding: 0.7rem 0;
+            border-radius: 9px;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(142, 148, 251, 0.11);
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(90deg, #8f94fb 60%, #4e54c8 100%);
+            box-shadow: 0 4px 16px rgba(142, 148, 251, 0.18);
+        }
+        .btn-primary:disabled {
+            background: #a0a0c0;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .btn-google {
+            background: #fff;
+            color: #444;
+            border: 1.5px solid #ddd;
+            font-weight: 600;
+            width: 100%;
+            margin-bottom: 1rem;
+            transition: background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 8px rgba(142, 148, 251, 0.08);
+            border-radius: 9px;
+            padding: 0.65rem 0;
+            font-size: 1.01rem;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        .btn-google.enabled {
+            pointer-events: auto;
+            opacity: 1;
+        }
+        .register-link {
+            color: #4e54c8;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        .register-link.enabled {
+            pointer-events: auto;
+            opacity: 1;
+        }
+        .register-btn {
+            border-radius: 9px;
+            font-weight: 700;
+            font-size: 1.01rem;
+            padding: 0.65rem 0;
+        }
+        .divider {
+            text-align: center;
+            margin: 1.3rem 0 0.8rem 0;
+            position: relative;
+        }
+        .divider span {
+            background: rgba(255,255,255,0.8);
+            padding: 0 14px;
+            color: #aaa;
+            font-size: 1rem;
+            position: relative;
+            z-index: 2;
+            font-weight: 600;
+        }
+        .divider:before {
+            content: "";
+            position: absolute;
+            left: 0; right: 0; top: 50%;
+            height: 1.5px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+        .alert {
+            margin-bottom: 1.3rem;
+            font-size: 1.01rem;
+            border-radius: 8px;
+        }
+        .form-check-inline .form-check-input {
+            margin-top: 0.2rem;
+        }
+        .form-check-label {
+            font-weight: 600;
+        }
+        .consent-footer {
+            max-width: 410px;
+            width: 100%;
+            margin: 0 auto 40px auto;
+            background: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 48px 0 rgba(78, 84, 200, 0.18);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 28px;
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            padding: 1.8rem 2rem;
+            font-size: 0.9rem;
+            color: #4e54c8;
+            font-weight: 600;
+            font-family: 'Inter', 'Montserrat', sans-serif;
+            letter-spacing: 0.02em;
+        }
+        .consent-footer label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+        .consent-footer a {
+            color: #4e54c8;
+            text-decoration: underline;
+        }
+        .consent-footer a:hover {
+            color: #8f94fb;
+        }
+        .consent-footer .consent-checkboxes {
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 500px) {
+            .login-glass {
+                padding: 1.4rem 0.7rem 1.2rem 0.7rem;
+                max-width: 98vw;
+            }
+            .login-title {
+                font-size: 1.3rem;
+            }
+            .login-logo {
+                width: 54px; height: 54px; font-size: 1.2rem;
+            }
+            .consent-footer {
+                padding: 1.2rem 0.7rem;
+                max-width: 98vw;
+            }
+        }
+    </style>
 </head>
 <body>
-    {% with messages = get_flashed_messages(with_categories=true) %}
+    <div class="bg-animated">
+        <span class="circle1"></span>
+        <span class="circle2"></span>
+        <span class="circle3"></span>
+    </div>
+    <div class="login-glass">
+        <div class="login-logo">
+            <span>EP</span>
+        </div>
+        <div class="login-title">Sign in to Electronics Portal</div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }}">
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
                         {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
-    <form action = "dashboard" method="post">
-        <table>
-            <tr>
-                <td>Enter mailId : </td>
-                <td> <input type = "text" name = "emailID">   </td>
-            </tr>
-            <tr>
-                <td>Enter Password</td>
-                <td> <input type="password" name = "pass"></td>
-            </tr>
-            <tr>
-                <td> <input type="radio" name = "user" value="com"> Company</td>
-                <td> <input type="radio" name = "user" value="admin"> Admin</td>
-            </tr>
-            <tr>
-                <td><input type="submit"></td>
-            </tr>
-        </table>
-    </form>
-    <table>
-        <tr>
-            <td>
-                <a href="{{ url_for('manohar') }}">
-                    <button type="button">Sign in with Google</button>
-                </a>
-            </td>
-        </tr>
-        <tr>No Account yet???? REGISTER HERE</tr>
-        <tr>
-            <td>
-                <p> <button><a href="{{ url_for('register') }}">Register</a></button></p>
-            </td>
-        </tr>
-    </table>
+        <form action="{{ url_for('dashboard') }}" method="post" id="loginForm">
+            <div class="mb-3">
+                <label for="emailID" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="emailID" name="emailID" placeholder="Enter your email" required />
+            </div>
+            <div class="mb-3">
+                <label for="pass" class="form-label">Password</label>
+                <input type="password" class="form-control" id="pass" name="pass" placeholder="Enter your password" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label me-3">Login as:</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="user" id="company" value="com" required />
+                    <label class="form-check-label" for="company">Company</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="user" id="admin" value="Admin" />
+                    <label class="form-check-label" for="admin">Admin</label>
+                </div>
+            </div>
+            <div class="d-grid mb-2">
+                <button type="submit" class="btn btn-primary btn-block" id="loginBtn" disabled>Login</button>
+            </div>
+        </form>
+        <div class="divider"><span>or</span></div>
+        <a href="{{ url_for('manohar') }}" class="btn btn-google mb-2" id="googleBtn" tabindex="-1">
+            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google" style="height: 20px; margin-right: 8px; vertical-align: middle;" />
+            Sign in with Google
+        </a>
+        <div class="text-center mt-3">
+            <span class="text-muted">No account yet?</span>
+        </div>
+        <div class="d-grid">
+            <a href="{{ url_for('register') }}" class="register-link btn btn-outline-primary mt-2 register-btn" id="registerBtn" tabindex="-1">Register Here</a>
+        </div>
+    </div>
+
+    <!-- Consent Form Footer -->
+    <div class="consent-footer">
+        <form id="consentFormFooter">
+            <div class="consent-checkboxes">
+                <label>
+                    <input type="checkbox" id="ageConsent" />
+                    I confirm that I am over 18 years of age.
+                </label>
+            </div>
+            <div class="consent-checkboxes">
+                <label>
+                    <input type="checkbox" id="dataConsent" />
+                    I consent to the collection and sharing of my browsing data with third parties for targeted advertisements. I understand I can withdraw my consent at any time. See our <a href="https://drive.google.com/file/d/1cDLxW-PIOBdt_SRcnLA4Cdo815cSwjw0/view?usp=sharing" target="_blank">Privacy Policy</a>.
+                </label>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Get elements
+        const ageCheckbox = document.getElementById('ageConsent');
+        const dataCheckbox = document.getElementById('dataConsent');
+        const loginBtn = document.getElementById('loginBtn');
+        const googleBtn = document.getElementById('googleBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const loginForm = document.getElementById('loginForm');
+
+        function updateFunctionalityState() {
+            const enabled = ageCheckbox.checked && dataCheckbox.checked;
+            // Login button
+            loginBtn.disabled = !enabled;
+            // Google login
+            if (enabled) {
+                googleBtn.classList.add('enabled');
+                googleBtn.removeAttribute('tabindex');
+            } else {
+                googleBtn.classList.remove('enabled');
+                googleBtn.setAttribute('tabindex', '-1');
+            }
+            // Register link
+            if (enabled) {
+                registerBtn.classList.add('enabled');
+                registerBtn.removeAttribute('tabindex');
+            } else {
+                registerBtn.classList.remove('enabled');
+                registerBtn.setAttribute('tabindex', '-1');
+            }
+            // Inputs and radios
+            Array.from(loginForm.elements).forEach(function(el) {
+                if (el.type !== "submit") {
+                    el.disabled = !enabled;
+                }
+            });
+        }
+
+        ageCheckbox.addEventListener('change', updateFunctionalityState);
+        dataCheckbox.addEventListener('change', updateFunctionalityState);
+
+        // Block form submission if not enabled (for safety)
+        loginForm.addEventListener('submit', function(e) {
+            if (loginBtn.disabled) {
+                e.preventDefault();
+            }
+        });
+
+        // Block Google login and register click if not enabled (for safety)
+        googleBtn.addEventListener('click', function(e) {
+            if (!googleBtn.classList.contains('enabled')) {
+                e.preventDefault();
+            }
+        });
+        registerBtn.addEventListener('click', function(e) {
+            if (!registerBtn.classList.contains('enabled')) {
+                e.preventDefault();
+            }
+        });
+
+        // On page load, disable all inputs except consent checkboxes
+        window.addEventListener('DOMContentLoaded', function() {
+            updateFunctionalityState();
+        });
+    </script>
 </body>
 </html>

@@ -37,7 +37,7 @@ flow  = Flow.from_client_secrets_file(
     redirect_uri = "http://127.0.0.1:5000/block2"
     )
 
-conn = sql.connect(host = "127.0.0.1", user = "root" ,password = "Pavitra@01", database = "brand_sentineo")
+conn = sql.connect(host = "localhost", user = "root" ,password = "Pavitra@01", database = "brand_sentineo")
 app = Flask(__name__)
 
 app.config['CACHE_TYPE'] = 'redis'
@@ -91,14 +91,26 @@ def block2():
     session["google_id"] = id_info.get("sub")
     session["email"] = id_info.get("email")
     global email_id
-    email_id = session["email"]
-    c.execute('SELECT role FROM access WHERE email_id = %s', (session["email"],))
-    result = c.fetchone()
     global role
+    email_id = session["email"]
+    c.execute("select role from access where email_id = '{}'".format(email_id))
+    result = c.fetchone()
+    role = None
     if result:
         role = result[0]
-    else:
-        role = 'cus'
+    if role:
+        if role == "com":
+            c.execute("select product from access where email_id = '{}'".format(email_id))
+            key = c.fetchone()[0]
+            reddit_posts = reddit_analyis(key)
+            EventRegistry_posts = EventRegistry_analysis(key)
+            news_articles = news_Analysis(key)
+            tumblr_blogs = tumbler_analysis(key)
+            return render_template('brand_dashboard.html', event = EventRegistry_posts,reddit = reddit_posts, news = news_articles, tumblr = tumblr_blogs)
+        elif role == "Admin":
+            return redirect(url_for('admin_dashboard'))
+        else:
+            return render_template('dashboard.html')
     return render_template('dashboard.html')
 
 
@@ -126,22 +138,34 @@ analyzer = SentimentIntensityAnalyzer()
 # Funtion for Reddit API Data Analysis
 def reddit_analyis(key):
     posts = []
-    for post in reddit.subreddit("technology").search(key,limit = 100):
+    for post in reddit.subreddit("technology").search(key, limit=100):
         upvotes = max(post.score, 0)
-        downvotes = int((1 - post.upvote_ratio) * (upvotes + abs(post.score))) if post.score < 0 else int((1 - post.upvote_ratio) * (upvotes + abs(post.score)))
+        total_votes = upvotes + abs(post.score)
+        downvotes = int((1 - post.upvote_ratio) * total_votes) if total_votes != 0 else 0
+        votes_sum = upvotes + downvotes
+        if votes_sum == 0:
+            sentiment = analyzer.polarity_scores(post.title)['compound'] * 0.2  
+        else:
+            sentiment = (
+                0.2 * analyzer.polarity_scores(post.title)['compound'] +
+                (0.5 * upvotes) / votes_sum -
+                0.3 * (downvotes) / votes_sum
+            )
+
         posts.append({
-            "id":post.id,
-            "title":post.title,
-            "selftext" : post.selftext,
-            "created utc":post.created_utc,
-            "score":post.score,
+            "id": post.id,
+            "title": post.title,
+            "selftext": post.selftext,
+            "created utc": post.created_utc,
+            "score": post.score,
             "upvotes": upvotes,
             "downvotes": downvotes,
-            "sentiment": 0.2*(analyzer.polarity_scores(post.title)['compound']) + (0.5*upvotes)/(upvotes+downvotes) - 0.3*(downvotes)/(upvotes+downvotes)
+            "sentiment": sentiment
         })
-        df = pd.DataFrame(posts)
-        result = df['sentiment'].mean()
+    df = pd.DataFrame(posts)
+    result = df['sentiment'].mean() if not df.empty else 0
     return result
+
 
 # Function for News API data Analysis
 def news_Analysis(key):
@@ -220,9 +244,14 @@ def dashboard():
         global email_id
         role = user
         email_id = mail
-        if role!='admin':
-            flash("Login successful!", "success")
-            return render_template('dashboard.html')
+        if role!='Admin':
+            c.execute("select product from access where email_id = '{}'".format(email_id))
+            key = c.fetchone()[0]
+            reddit_posts = reddit_analyis(key)
+            EventRegistry_posts = EventRegistry_analysis(key)
+            news_articles = news_Analysis(key)
+            tumblr_blogs = tumbler_analysis(key)
+            return render_template('brand_dashboard.html', event = EventRegistry_posts,reddit = reddit_posts, news = news_articles, tumblr = tumblr_blogs)
         else:
             flash("Login successful!", "success")
             return redirect(url_for('admin_dashboard'))
@@ -241,25 +270,25 @@ def make_cache_key():
 @cache.cached(timeout=10, make_cache_key=make_cache_key)
 def dashboard2():
     key = request.form.get('keyword')
-    
-    # reddit_posts = reddit_analyis(key)
-    # EventRegistry_posts = EventRegistry_analysis(key)
-    # news_articles = news_Analysis(key)
-    # tumblr_blogs = tumbler_analysis(key)
-    reddit_posts = 0.663
-    EventRegistry_posts = 0.5
-    news_articles = 0
-    tumblr_blogs = 0.36
-
-    if role == 'cus':   
-        query = "insert into search (email_id, product) values('{}','{}')".format(email_id,key)
+    pro_type = request.form.get('device')
+    reddit_posts = reddit_analyis(key)
+    EventRegistry_posts = EventRegistry_analysis(key)
+    news_articles = news_Analysis(key)
+    tumblr_blogs = tumbler_analysis(key)
+    c.execute("select role from access where email_id  = '{}'".format(email_id))
+    global role
+    role = None
+    result = c.fetchone()
+    if result:
+        role = result[0]
+    if role:
+        if role == 'com':
+            return render_template('brand_dashboard.html', event = EventRegistry_posts,reddit = reddit_posts, news = news_articles, tumblr = tumblr_blogs)
+    else:
+        query = "insert into search (email_id, product, pro_type) values('{}','{}','{}')".format(email_id, key, pro_type)
         c.execute(query)
         conn.commit()
         return render_template('Customer_dashboard.html', event = EventRegistry_posts,reddit = reddit_posts, news = news_articles, tumblr = tumblr_blogs)
-    elif role == 'com':
-        return render_template('brand_dashboard.html', event = EventRegistry_posts,reddit = reddit_posts, news = news_articles, tumblr = tumblr_blogs)
-    else:
-        return "State Bypassed"
 
 @app.route('/register', methods = ["POST","GET"])
 def register():
@@ -285,7 +314,7 @@ def register():
         if user_state == True:
             return render_template('register.html')
         passwd = generate_password_hash(passwd)
-        url = "insert into access values('{}','{}','{}','{}','{}')".format(mail, passwd, product, device, subscription)
+        url = "insert into access values('{}','{}','{}','{}','{}','com')".format(mail, passwd, product, device, subscription)
         c.execute(url)
         conn.commit()
         flash("Registration Successful","success")
@@ -298,7 +327,110 @@ def register():
 
 @app.route('/admin_Dashboard')
 def admin_dashboard():
-    c.execute('select * from search')
+    c.execute('select * from search order by product')
     rows = c.fetchall()
     return render_template('admin_dashboard.html',trace = rows)
 
+def send_msg3(server, sender_email, receiver_mails):
+    c.execute("select product from access where email_id = '{}'".format(receiver_mails))
+    res = c.fetchone()[0].lower()
+    print(receiver_mails)
+    c.execute("select email_id, state from search where product = '{}'".format(res))
+    final_mailing_list = c.fetchall()
+    table_rows = "".join(f"<tr><td>{email}</td><td>{state}</td></tr>" for email, state in final_mailing_list)
+    html_content = f"""
+    <html>
+    <body>
+        <p>Alert!!!! Report From Brand Sentineo EP</p>
+        <p>Here is a list of people associated with the product:</p>
+        <table border="1">
+            <tr><th>Email ID</th><th>State</th></tr>
+            {table_rows}
+        </table>
+    </body>
+    </html>
+    """
+    try:
+        message = MIMEMultipart("alternative")
+        message["Subject"] = "Alert!!!! Report From Brand Sentineo EP"
+        message["From"] = sender_email
+        message["To"] = receiver_mails[0]
+        message.attach(MIMEText(html_content, "html"))
+        server.sendmail(sender_email, receiver_mails, message.as_string())
+        print("HTML-formatted email sent successfully to", receiver_mails)
+    except Exception as e:
+        print(f"Failed to send email(1 Month case): {e}")
+
+def send_msg(server, sender_email):
+    c.execute("select email_id, product from access where role = 'com' ")
+    temp = c.fetchall()
+    for i in temp:
+        send_msg3(server, sender_email, i[0])
+
+def send_msg5(server, sender_email, receiver_mails):
+    c.execute("select pro_type from access where email_id = '{}'".format(receiver_mails))
+    res = c.fetchone()[0].lower()
+    c.execute("select email_id, product, state from search where pro_type = '{}'".format(res))
+    final_mailing_list = c.fetchall()
+    table_rows = "".join(f"<tr><td>{email}</td><td>{product}</td><td>{state}</td></tr>" for email, product, state in final_mailing_list)
+    html_content = f"""
+    <html>
+    <body>
+        <p>Alert!!!! Report From Brand Sentineo EP</p>
+        <p>Here is a list of people associated with the product:</p>
+        <table border="1">
+            <tr><th>Email ID</th><th>State</th></tr>
+            {table_rows}
+        </table>
+    </body>
+    </html>
+    """
+    try:
+        message = MIMEMultipart("alternative")
+        message["Subject"] = "Alert!!!! Report From Brand Sentineo EP"
+        message["From"] = sender_email
+        message["To"] = receiver_mails[0]
+        message.attach(MIMEText(html_content, "html"))
+        server.sendmail(sender_email, receiver_mails, message.as_string())
+        print("HTML-formatted email sent successfully to", receiver_mails)
+    except Exception as e:
+        print(f"Failed to send email(1 Month case): {e}")
+
+def send_msg4(server, sender_email):
+    c.execute("select email_id, pro_type from access where role = 'com' and subscription = 'pro'")
+    temp = c.fetchall()
+    print(temp)
+    for i in temp:
+        send_msg5(server, sender_email, i[0])
+
+@app.route('/admin_Dashboard2')
+def admin_dashboard2():
+    try:
+        context = ssl.create_default_context()
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.starttls(context=context)
+            server.login(sender_email, password)
+            send_msg(server, sender_email)
+
+    except smtplib.SMTPAuthenticationError:
+        print("Failed to authenticate. Check your email credentials.")
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin_Dashboard3')
+def halert():
+    try:
+        context = ssl.create_default_context()
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.starttls(context=context)
+            server.login(sender_email, password)
+            send_msg4(server, sender_email)
+
+    except smtplib.SMTPAuthenticationError:
+        print("Failed to authenticate. Check your email credentials.")
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    return redirect(url_for('admin_dashboard'))

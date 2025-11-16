@@ -3,81 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brand DashBoard</title>
+    <title>Brand Dashboard | Electronics Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Inter', 'Montserrat', sans-serif;
+            background: linear-gradient(120deg, #4e54c8 0%, #8f94fb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+        }
+        .bg-animated {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .bg-animated span {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.4;
+            animation: float 12s infinite alternate;
+        }
+        .bg-animated .circle1 {
+            width: 420px; height: 420px; left: -120px; top: -120px;
+            background: #a18cd1;
+            animation-delay: 0s;
+        }
+        .bg-animated .circle2 {
+            width: 340px; height: 340px; right: -100px; top: 60px;
+            background: #fbc2eb;
+            animation-delay: 3s;
+        }
+        .bg-animated .circle3 {
+            width: 300px; height: 300px; left: 60px; bottom: -120px;
+            background: #fad0c4;
+            animation-delay: 6s;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) scale(1);}
+            100% { transform: translateY(-40px) scale(1.1);}
+        }
+        .dashboard-glass {
+            position: relative;
+            z-index: 1;
+            background: rgba(255,255,255,0.18);
+            box-shadow: 0 8px 48px 0 rgba(78,84,200,0.18);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 28px;
+            border: 1.5px solid rgba(255,255,255,0.25);
+            padding: 2.7rem 2.2rem 2.2rem 2.2rem;
+            max-width: 700px;
+            width: 100%;
+            margin: 40px auto;
+            animation: fadeIn 1.2s cubic-bezier(.23,1.04,.73,.97);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(60px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .dashboard-logo {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, #4e54c8 60%, #8f94fb 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.3rem auto;
+            font-size: 2.1rem;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 24px rgba(78,84,200,0.22);
+        }
+        .dashboard-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: #4e54c8;
+            margin-bottom: 1.2rem;
+            text-align: center;
+            font-size: 2.1rem;
+            letter-spacing: 0.5px;
+        }
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: #4e54c8;
+            margin-top: 2.2rem;
+            margin-bottom: 0.8rem;
+            font-size: 1.3rem;
+            letter-spacing: 0.2px;
+        }
+        .sentiment-block {
+            margin-bottom: 1.6rem;
+            padding: 1.2rem 1.2rem 1rem 1.2rem;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.32);
+            box-shadow: 0 2px 12px rgba(78,84,200,0.07);
+        }
+        .sentiment-label {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+        }
+        .sentiment-very-negative { color: #d7263d; }
+        .sentiment-negative { color: #e55934; }
+        .sentiment-neutral { color: #f4d35e; }
+        .sentiment-positive { color: #377f5b; }
+        .sentiment-very-positive { color: #4e54c8; }
+        .sentiment-desc {
+            font-size: 1.03rem;
+            color: #333;
+            margin-bottom: 0;
+        }
+        .score-row {
+            margin-top: 2.5rem;
+            text-align: center;
+            font-size: 1.05rem;
+            color: #4e54c8;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+        @media (max-width: 800px) {
+            .dashboard-glass {
+                max-width: 98vw;
+            }
+        }
+        @media (max-width: 500px) {
+            .dashboard-glass {
+                padding: 1.4rem 0.7rem 1.2rem 0.7rem;
+                max-width: 98vw;
+            }
+            .dashboard-title {
+                font-size: 1.3rem;
+            }
+            .dashboard-logo {
+                width: 54px; height: 54px; font-size: 1.2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Event Registry Analysis..... Most Criticized and Most trending real time news on your Brand</h1>
+    <div class="bg-animated">
+        <span class="circle1"></span>
+        <span class="circle2"></span>
+        <span class="circle3"></span>
+    </div>
+    <div class="dashboard-glass">
+        <div class="dashboard-logo">
+            <span>EP</span>
+        </div>
+        <div class="dashboard-title">
+            Brand Dashboard
+        </div>
+
+        <!-- Event Registry Analysis -->
+<div class="section-title">Event Registry Analysis</div>
+<div class="sentiment-block">
     {% if event<=-0.6 %}
-        <h3>Severe dissatisfaction</h3>
-        <h4> Immediate investigation and urgent fixes; prioritize addressing recurring complaints and critical failures</h4>
+        <div class="sentiment-label sentiment-very-negative">Severe dissatisfaction</div>
+        <div class="sentiment-desc">
+            Trending news signals a reputational crisis. Launch an immediate investigation, address critical failures, and communicate transparently with stakeholders to restore trust.
+        </div>
     {% elif event<-0.2 %}
-        <h3> Significant negative sentiment </h3>
-        <h4>Identify and resolve common pain points; communicate planned improvements to users</h4>
-    
+        <div class="sentiment-label sentiment-negative">Significant negative sentiment</div>
+        <div class="sentiment-desc">
+            Widespread negative press detected. Identify root causes, resolve pain points, and proactively share improvement plans with the public and media.
+        </div>
     {% elif event<0.19 %}
-        <h3> Mixed or unclear sentiment </h3>
-        <h4> Gather more detailed feedback; monitor trends and clarify user expectations </h4>
+        <div class="sentiment-label sentiment-neutral">Mixed or unclear sentiment</div>
+        <div class="sentiment-desc">
+            News coverage is mixed. Monitor trends closely, seek additional feedback, and clarify your messaging to address uncertainties.
+        </div>
     {% elif event<0.59 %}
-        <h3> Generally positive sentiment </h3>
-        <h4> Maintain strengths, but look for minor improvements or feature requests; acknowledge and reward positive feedback </h4>
+        <div class="sentiment-label sentiment-positive">Generally positive sentiment</div>
+        <div class="sentiment-desc">
+            News sentiment is favorable. Maintain strong performance, address minor concerns, and highlight positive developments in public communications.
+        </div>
     {% else %}
-        <h3> Strong positive sentiment </h3>
-        <h4> Leverage satisfied users for testimonials and referrals; continue to innovate and exceed expectations </h4>
+        <div class="sentiment-label sentiment-very-positive">Strong positive sentiment</div>
+        <div class="sentiment-desc">
+            News is highly favorable. Leverage positive coverage for brand-building, encourage testimonials, and continue to innovate.
+        </div>
     {% endif %}
+</div>
 
-    <h1>News Api Analysis.... Most Recent News on your Brand....</h1>
+<!-- News API Analysis -->
+<div class="section-title">News API Analysis</div>
+<div class="sentiment-block">
     {% if news<=-0.6 %}
-        <h3>Severe dissatisfaction</h3>
-        <h4> Immediate investigation and urgent fixes; prioritize addressing recurring complaints and critical failures</h4>
+        <div class="sentiment-label sentiment-very-negative">Severe dissatisfaction</div>
+        <div class="sentiment-desc">
+            Recent news articles highlight major issues. Act swiftly to investigate, resolve recurring problems, and issue public statements to manage reputation risk.
+        </div>
     {% elif news<-0.2 %}
-        <h3> Significant negative sentiment </h3>
-        <h4>Identify and resolve common pain points; communicate planned improvements to users</h4>
+        <div class="sentiment-label sentiment-negative">Significant negative sentiment</div>
+        <div class="sentiment-desc">
+            Negative media sentiment is rising. Identify and address common complaints, and communicate your action plan to the press and customers.
+        </div>
     {% elif news<0.19 %}
-        <h3> Mixed or unclear sentiment </h3>
-        <h4> Gather more detailed feedback; monitor trends and clarify user expectations </h4>
+        <div class="sentiment-label sentiment-neutral">Mixed or unclear sentiment</div>
+        <div class="sentiment-desc">
+            Media coverage is mixed. Gather more insights, monitor for shifts in tone, and clarify your company’s position where needed.
+        </div>
     {% elif news<0.59 %}
-        <h3> Generally positive sentiment </h3>
-        <h4> Maintain strengths, but look for minor improvements or feature requests; acknowledge and reward positive feedback </h4>
+        <div class="sentiment-label sentiment-positive">Generally positive sentiment</div>
+        <div class="sentiment-desc">
+            News articles are largely positive. Reinforce strengths, address minor issues, and share success stories with the media.
+        </div>
     {% else %}
-        <h3> Strong positive sentiment </h3>
-        <h4> Leverage satisfied users for testimonials and referrals; continue to innovate and exceed expectations </h4>
+        <div class="sentiment-label sentiment-very-positive">Strong positive sentiment</div>
+        <div class="sentiment-desc">
+            Media coverage is overwhelmingly positive. Use this momentum to promote your brand and strengthen stakeholder relationships.
+        </div>
     {% endif %}
+</div>
 
-    <h1>Reddit Api Analysis : Social Media is reflecting the following on your brand....</h1>
+<!-- Reddit API Analysis -->
+<div class="section-title">Reddit API Analysis</div>
+<div class="sentiment-block">
     {% if reddit<=-0.6 %}
-        <h3>Severe dissatisfaction</h3>
-        <h4> Immediate investigation and urgent fixes; prioritize addressing recurring complaints and critical failures</h4>
+        <div class="sentiment-label sentiment-very-negative">Severe dissatisfaction</div>
+        <div class="sentiment-desc">
+            Reddit users report serious issues. Engage directly with the community, resolve urgent complaints, and demonstrate responsiveness.
+        </div>
     {% elif reddit<-0.2 %}
-        <h3> Significant negative sentiment </h3>
-        <h4>Identify and resolve common pain points; communicate planned improvements to users</h4>
+        <div class="sentiment-label sentiment-negative">Significant negative sentiment</div>
+        <div class="sentiment-desc">
+            Negative sentiment is prevalent on Reddit. Identify key pain points, address them publicly, and keep the community updated on progress.
+        </div>
     {% elif reddit<0.19 %}
-        <h3> Mixed or unclear sentiment </h3>
-        <h4> Gather more detailed feedback; monitor trends and clarify user expectations </h4>
+        <div class="sentiment-label sentiment-neutral">Mixed or unclear sentiment</div>
+        <div class="sentiment-desc">
+            Community sentiment is mixed. Monitor discussions, solicit specific feedback, and clarify company actions to improve perception.
+        </div>
     {% elif reddit<0.59 %}
-        <h3> Generally positive sentiment </h3>
-        <h4> Maintain strengths, but look for minor improvements or feature requests; acknowledge and reward positive feedback </h4>
+        <div class="sentiment-label sentiment-positive">Generally positive sentiment</div>
+        <div class="sentiment-desc">
+            Reddit discussions are mostly positive. Thank users for their support, address minor concerns, and encourage continued engagement.
+        </div>
     {% else %}
-        <h3> Strong positive sentiment </h3>
-        <h4> Leverage satisfied users for testimonials and referrals; continue to innovate and exceed expectations </h4>
+        <div class="sentiment-label sentiment-very-positive">Strong positive sentiment</div>
+        <div class="sentiment-desc">
+            Reddit community is highly supportive. Celebrate advocates, share success stories, and foster ongoing positive engagement.
+        </div>
     {% endif %}
+</div>
 
-    <h1>Tumblr Api Analysis : Social Media blogs is reflecting the following on your brand....</h1>
+<!-- Tumblr API Analysis -->
+<div class="section-title">Tumblr API Analysis</div>
+<div class="sentiment-block">
     {% if tumblr<=-0.6 %}
-        <h3>Severe dissatisfaction</h3>
-        <h4> Immediate investigation and urgent fixes; prioritize addressing recurring complaints and critical failures</h4>
+        <div class="sentiment-label sentiment-very-negative">Severe dissatisfaction</div>
+        <div class="sentiment-desc">
+            Tumblr blogs highlight major dissatisfaction. Investigate issues raised, engage with bloggers, and provide transparent updates.
+        </div>
     {% elif tumblr<-0.2 %}
-        <h3> Significant negative sentiment </h3>
-        <h4>Identify and resolve common pain points; communicate planned improvements to users</h4>
+        <div class="sentiment-label sentiment-negative">Significant negative sentiment</div>
+        <div class="sentiment-desc">
+            Negative sentiment is common among Tumblr bloggers. Address recurring concerns, share improvement plans, and engage authentically.
+        </div>
     {% elif tumblr<0.19 %}
-        <h3> Mixed or unclear sentiment </h3>
-        <h4> Gather more detailed feedback; monitor trends and clarify user expectations </h4>
+        <div class="sentiment-label sentiment-neutral">Mixed or unclear sentiment</div>
+        <div class="sentiment-desc">
+            Blogging sentiment is mixed. Seek direct feedback from creators, clarify your messaging, and monitor for emerging trends.
+        </div>
     {% elif tumblr<0.59 %}
-        <h3> Generally positive sentiment </h3>
-        <h4> Maintain strengths, but look for minor improvements or feature requests; acknowledge and reward positive feedback </h4>
+        <div class="sentiment-label sentiment-positive">Generally positive sentiment</div>
+        <div class="sentiment-desc">
+            Tumblr posts are generally positive. Recognize and share positive content, address minor issues, and encourage community creativity.
+        </div>
     {% else %}
-        <h3> Strong positive sentiment </h3>
-        <h4> Leverage satisfied users for testimonials and referrals; continue to innovate and exceed expectations </h4>
+        <div class="sentiment-label sentiment-very-positive">Strong positive sentiment</div>
+        <div class="sentiment-desc">
+            Tumblr sentiment is highly positive. Amplify positive voices, collaborate with creators, and continue building strong community ties.
+        </div>
     {% endif %}
-    <h1>Event Registry : {{event}}, News : {{news}}, Reddit : {{reddit}}, Tumblr : {{tumblr}}</h1>
+</div>
+
+
+        <div class="score-row">
+            Event Registry: {{event}}, News: {{news}}, Reddit: {{reddit}}, Tumblr: {{tumblr}}
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
